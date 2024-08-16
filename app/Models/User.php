@@ -115,8 +115,7 @@ class User extends Authenticatable implements JWTSubject
 
     public static function getUserById($user_id)
     {
-        $query = self::with(['coachDetails','coahExpertise', 'coachAvailableSlot'])
-                        ->where('id', $user_id)->first();
+        $query = self::where('id', $user_id)->first();
         return $query;
     }
 

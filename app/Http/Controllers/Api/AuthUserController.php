@@ -29,43 +29,6 @@ class AuthUserController extends Controller
         $this->currentUser = auth('api')->user();
     }
 
-    // public function validation($action,$slug=NULL)
-    // {
-    //     $validator = [];
-    //     $custom_messages = [
-    //         'password.regex' => __('app.password_regex')
-    //     ];
-    //     switch ($action){
-    //         case 'POST':
-    //             $validator = Validator::make($this->__request->all(), [
-    //                 'name'          => ['required','min:3','max:50','regex:/^([A-Za-z0-9\s])+$/'],
-    //                 'email'         => ['required', 'email',
-    //                     Rule::unique('users')->where('is_email_verify',1)->whereNull('deleted_at')
-    //                 ],
-    //                 'mobile_no'     => [
-    //                     'required',
-    //                     Rule::unique('users')->whereNull('deleted_at'),
-    //                     'regex:/^(\+\d{1,3}[-])\d{9,11}$/'
-    //                 ],
-    //                 'password'      => ['required','regex:/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,150}$/'],
-    //                 'confirm_password' => 'required|same:password',
-    //                 'device_type'  => 'required|in:web,android,ios',
-    //                 'device_token' => 'required',
-    //             ],$custom_messages);
-    //             break;
-    //         case 'PUT':
-    //             $this->__request->merge(['slug' => $slug]);
-    //             $validator = Validator::make($this->__request->all(), [
-    //                 'name'      => ['min:3','max:50','regex:/^([A-Za-z0-9\s])+$/'],
-    //                 'image_url' => ['sometimes'],
-    //                 'mobile_no' =>  ['required',
-    //                                 Rule::unique('users')->whereNull('deleted_at')->ignore($this->currentUser->id)]
-    //             ],$custom_messages);
-    //             break;
-    //     }
-    //     return $validator;
-    // }
-
     public function register(UserRegisterRequest $request): mixed
     {
         //print_r("here");
@@ -140,9 +103,7 @@ class AuthUserController extends Controller
                 $data['image'] = uploadImage($request->file('image'), 'user', $this->currentUser?->image ?? null);
             }
             $this->currentUser->update($data);
-            CoachDetail::updateCoachProfile( $this->currentUser->id, $request->all());
-            $record =User::getUserById($this->currentUser->id);
-            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Profile has been updated.", $record);
+            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Profile has been updated.", $this->currentUser);
         } else {
             return new BaseResponse(STATUS_CODE_NOTAUTHORISED, STATUS_CODE_NOTAUTHORISED, "User unauthorized.");
         }
