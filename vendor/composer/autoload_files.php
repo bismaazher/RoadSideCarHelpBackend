@@ -38,6 +38,5 @@ return array(
     'ec07570ca5a812141189b1fa81503674' => $vendorDir . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     '320163ac6b93aebe3dc25b60a0533d56' => $vendorDir . '/spatie/laravel-ignition/src/helpers.php',
     '826f3da4001aa504d228ba58f15bad49' => $baseDir . '/app/Helpers/Constants.php',
-    '688efec91d02be7c71c50c2746bcf315' => $baseDir . '/app/Helpers/GeneralHelper.php',
-    '3aaaf8187ad15b16f3e46f99e01f31fd' => $baseDir . '/app/Helpers/PushNotificationHelper.php',
+    '688efec91d02be7c71c50c2746bcf315' => $baseDir . '/app/Helpers/GeneralHelper.php'
 );

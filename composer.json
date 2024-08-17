@@ -24,8 +24,7 @@
     "autoload": {
         "files": [
             "app/Helpers/Constants.php",
-            "app/Helpers/GeneralHelper.php",
-            "app/Helpers/PushNotificationHelper.php"
+            "app/Helpers/GeneralHelper.php"
         ],
         "psr-4": {
             "App\\": "app/",
