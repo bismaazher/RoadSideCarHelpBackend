@@ -34,9 +34,9 @@ class AuthUserController extends Controller
         if ($user) {
             $token = auth('api')->login($user);
             if ($token) {
-                $this->sendOTP($user);
+                // $this->sendOTP($user);
                 DB::commit();
-                return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Kindly check your phone.", $user, $token);
+                return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Register successfully.", $user, $token);
             } else {
                 return new BaseResponse(STATUS_CODE_NOTAUTHORISED, STATUS_CODE_NOTAUTHORISED, "Failed to Sign up");
             }
@@ -51,9 +51,9 @@ class AuthUserController extends Controller
             return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Incorrect email or password");
         }
 
-        if ((!Auth::guard('api')->user()->is_verify)) {
-            return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Please verify your phone number.");
-        }
+        // if ((!Auth::guard('api')->user()->is_verify)) {
+        //     return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Please verify your phone number.");
+        // }
 
         if (auth('api')->check()) {
             $agent = auth('api')->user();
