@@ -20,7 +20,6 @@ Route::prefix('user')
         Route::post('register', 'register')->name('register');
         Route::post('login', 'login')->name('login');
         Route::post('forgot', 'forgot');
-        Route::post('social/login','getSocialData')->name('sociallogin');
     });
 
 Route::prefix('user')
@@ -29,8 +28,6 @@ Route::prefix('user')
     ->group(function () {
         Route::controller(AuthUserController::class)->group(function () {
             Route::post('logout', 'logout');
-            Route::post('verify/otp', 'verifyOtp');
-            Route::get('resend/otp', 'resendOtp');
             Route::post('change/password', 'changePassword');
             Route::post('profile/update', 'updateProfile');
             Route::get('list', 'getUserList');

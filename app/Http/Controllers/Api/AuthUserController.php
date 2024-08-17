@@ -10,7 +10,6 @@ use App\Http\Requests\UserLoginRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserRegisterRequest;
-use App\Http\Requests\VerifyOtpRequest;
 use App\Http\Responses\BaseResponse;
 use App\Models\UserOtp;
 use Illuminate\Support\Arr;
@@ -34,7 +33,6 @@ class AuthUserController extends Controller
         if ($user) {
             $token = auth('api')->login($user);
             if ($token) {
-                // $this->sendOTP($user);
                 DB::commit();
                 return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Register successfully.", $user, $token);
             } else {
@@ -51,10 +49,6 @@ class AuthUserController extends Controller
             return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Incorrect email or password");
         }
 
-        // if ((!Auth::guard('api')->user()->is_verify)) {
-        //     return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Please verify your phone number.");
-        // }
-
         if (auth('api')->check()) {
             $agent = auth('api')->user();
             $agent->fcm_token = $request->fcm_token;
@@ -64,7 +58,6 @@ class AuthUserController extends Controller
         }
 
         if ($agent && $token) {
-            $this->sendOTP($agent);
             DB::commit();
             return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Logged in successfully.", $agent, $token);
         }
@@ -92,54 +85,6 @@ class AuthUserController extends Controller
         }
     }
 
-    public function sendOTP(User $user)
-    {
-        $otp = rand(100000, 999999);
-        UserOtp::where(['user_id' => $user->id, 'is_expired' => 0])->delete();
-
-        UserOtp::create([
-            'code' => $otp,
-            'user_id' => $user->id,
-        ])->code;
-    }
-
-    public function verifyOtp(VerifyOtpRequest $request)
-    {
-        DB::beginTransaction();
-        $user = auth('api')->user();
-
-        $checkCode = UserOtp::getCode($request);
-
-        if ($request->code == '123456') {
-            $user->is_verify = 1;
-            $user->save();
-            $token = auth('api')->login($user);
-            DB::commit();
-            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Successfully verified", $user, $token);
-        } else if ($checkCode && $request->code == $checkCode->code) {
-            $user->is_verify = 1;
-            $user->save();
-            $token = auth('api')->login($user);
-            DB::commit();
-            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Successfully verified", $user, $token);
-        } else {
-            return new BaseResponse(STATUS_CODE_CREATE, STATUS_CODE_CREATE, "Incorrect code.");
-        }
-    }
-
-    public function resendOtp()
-    {
-        DB::beginTransaction();
-        if (auth('api')->check()) {
-            $user = auth('api')->user();
-            $this->sendOTP($user);
-            DB::commit();
-            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "OTP send successfully");
-        }
-
-        return new BaseResponse(STATUS_CODE_NOTAUTHORISED, STATUS_CODE_NOTAUTHORISED, "User authorized.");
-    }
-
     public function forgot(ForgotPasswordRequest $request)
     {
         DB::beginTransaction();
@@ -147,9 +92,8 @@ class AuthUserController extends Controller
         if ($user->count()) {
             $user = $user->first();
             $token = auth('api')->fromUser($user);
-            $this->sendOTP($user);
             DB::commit();
-            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Successfully send OTP", "", $token);
+            return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", "", $token);
         } else {
             DB::rollBack();
             return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Customer does not exist!");
