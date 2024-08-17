@@ -12,13 +12,11 @@ use App\Models\User;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\VerifyOtpRequest;
 use App\Http\Responses\BaseResponse;
-use App\Models\CoachDetail;
 use App\Models\UserOtp;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 class AuthUserController extends Controller
 {
@@ -31,7 +29,6 @@ class AuthUserController extends Controller
 
     public function register(UserRegisterRequest $request): mixed
     {
-        //print_r("here");
         DB::beginTransaction();
         $user = User::userSignup($request);
         if ($user) {
@@ -80,20 +77,6 @@ class AuthUserController extends Controller
         return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $record);
     }
 
-    //student to get coach list and coach to get my student list
-    function getUserList(Request $request)
-    {
-        $user = $this->currentUser;
-        $params = $request->all();
-
-        if( $user['user_group_id'] == '2' ){
-            $record = User::getCoachList();
-        }else{
-            $record = User::getMyStudent($user['id']);
-        }
-
-        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $record);
-    }
 
     function updateProfile(UpdateProfileRequest $request)
     {
@@ -109,14 +92,6 @@ class AuthUserController extends Controller
         }
     }
 
-    function userProfileDetails(Request $request)
-    {
-        $user_id = $this->currentUser->id;
-        $params = $request->all();
-        $record = CoachDetail::coachProfileDetails($user_id, $params);
-        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Coach Profile has been updated.", $record);
-    }
-
     public function sendOTP(User $user)
     {
         $otp = rand(100000, 999999);
@@ -126,8 +101,6 @@ class AuthUserController extends Controller
             'code' => $otp,
             'user_id' => $user->id,
         ])->code;
-
-        //Mail::to($user->email)->send(new SendOtp($otp));
     }
 
     public function verifyOtp(VerifyOtpRequest $request)
@@ -197,63 +170,6 @@ class AuthUserController extends Controller
         return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Successfully set password");
     }
 
-    function getSocialData(Request $request)
-    {
-        $request->validate([
-            'type' => 'required|in:facebook,google,apple'
-        ], [
-            'type.in' => 'The selected type should be in google,facebook,apple'
-        ]);
-
-        if (str($request->type)->contains(['google', 'facebook', 'apple'])) {
-            return $this->checkAlreadyUser($request->all());
-        } else {
-            return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Something went wrong.");
-        }
-    }
-
-    function checkAlreadyUser(array $data)
-    {
-        if (Arr::get($data, 'type') == 'google' && Arr::get($data, 'id')) {
-            $user = User::where('google_id', Arr::get($data, 'id'))->orWhere('email', Arr::get($data, 'email'))->first();
-            return $this->signInAsSocial($user, $data, 'google');
-        } elseif (Arr::get($data, 'type') == 'facebook' && Arr::get($data, 'id')) {
-            $user = User::where('facebook_id', Arr::get($data, 'id'))->orWhere('email', Arr::get($data, 'email'))->first();
-            return $this->signInAsSocial($user, $data, 'facebook');
-        } elseif (Arr::get($data, 'type') == 'apple' && Arr::get($data, 'id')) {
-            $user = User::where('apple_id', Arr::get($data, 'id'))->orWhere('email', Arr::get($data, 'email'))->first();
-            return $this->signInAsSocial($user, $data, 'apple');
-        } else {
-            return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Something went wrong.");
-        }
-    }
-
-    function signInAsSocial($user, $data, $type)
-    {
-        DB::beginTransaction();
-        if ($user) {
-            $token = auth('api')->login($user);
-            if ($token) {
-                DB::commit();
-                return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Logged in successfully.", $user, $token);
-            } else {
-                return new BaseResponse(STATUS_CODE_NOTAUTHORISED, STATUS_CODE_NOTAUTHORISED, "Failed to Sign up");
-            }
-        } else {
-            $socialUser = User::socialUser($data, $type);
-
-            if ($socialUser) {
-                $token = auth('api')->login($socialUser);
-                if ($token) {
-                    DB::commit();
-                    return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Logged in successfully.", $socialUser, $token);
-                } else {
-                    return new BaseResponse(STATUS_CODE_NOTAUTHORISED, STATUS_CODE_NOTAUTHORISED, "Failed to Sign up");
-                }
-            }
-        }
-    }
-
     public function logout()
     {
         if (auth('api')->check()) {
@@ -267,30 +183,4 @@ class AuthUserController extends Controller
         }
     }
 
-    public function getHabitList()
-    {
-        DB::beginTransaction();
-        $record = User::getHabitList();
-
-        DB::commit();
-        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $record);
-    }
-
-    public function getActivityList()
-    {
-        DB::beginTransaction();
-        $record = User::getActivityList();
-
-        DB::commit();
-        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $record);
-    }
-
-    public function getFieldList()
-    {
-        DB::beginTransaction();
-        $record = User::getFieldList();
-
-        DB::commit();
-        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $record);
-    }
 }

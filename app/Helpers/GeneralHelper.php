@@ -21,22 +21,3 @@ if (! function_exists('uploadImage')) {
     }
 }
 
-
-// if (! function_exists('sendSMS')) {
-//     function sendSMS($to, $message)
-//     {
-//         $client = new Client(
-//             config('services.twilio.twilio_account_sid'),
-//             config('services.twilio.twilio_auth_token')
-//         );
-
-//         return $client->messages->create(
-//             $to,
-//             [
-//                 'from' => config('services.twilio.twilio_number'),
-//                 'body' => $message
-//             ]
-//         );
-//     }
-// }
-
