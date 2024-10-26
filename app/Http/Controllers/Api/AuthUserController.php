@@ -127,4 +127,54 @@ class AuthUserController extends Controller
         }
     }
 
+    public function addUserContacts(Request $request)
+    {
+        DB::beginTransaction();
+        $user_id = $this->currentUser->id;
+        $user = User::addContacts($request, $user_id);
+        
+        DB::commit();
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Contacts added successfully.", $user);
+
+    }
+
+    public function getUserContacts()
+    {
+        $contacts = \DB::table('user_contacts')->where('user_id',$this->currentUser->id )->get();
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $contacts);
+        
+    }
+
+    public function getUserContactsById($id)
+    {
+        $contacts = \DB::table('user_contacts')->where('id', $id)->first();
+
+        // Check if contact was found
+        if (!$contacts) {
+            return new BaseResponse(STATUS_CODE_BADREQUEST, STATUS_CODE_BADREQUEST, "Contact not found", null);
+        }
+        $contactsArray = (array) $contacts;
+    
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Success", $contactsArray);
+        
+    }
+
+    public function updateUserContacts(Request $request, $id)
+    {
+        DB::beginTransaction();
+        $user_id = $this->currentUser->id;
+        $params = $request->all();
+        User::updateContacts($id, $user_id, $params);
+        
+        $contacts = \DB::table('user_contacts')->where('user_id',$this->currentUser->id )->get();
+        DB::commit();
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Contacts updated successfully.", $contacts);
+    }
+
+    public function deleteUserContacts($id)
+    {
+        \DB::table('user_contacts')->where('id', $id)->delete(true);
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Contact deleted successfully.");
+    }
+
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthUserController;
+use App\Http\Controllers\Api\NearbyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,8 +33,16 @@ Route::prefix('user')
             Route::post('profile/update', 'updateProfile');
             Route::get('list', 'getUserList');
             Route::get('profile/{id}', 'getUserProfile');
+            Route::post('add-contacts', 'addUserContacts');
+            Route::get('get-contacts', 'getUserContacts');
+            Route::get('contacts/{id}', 'getUserContactsById');
+            Route::post('update-contacts/{id}', 'updateUserContacts');
+            Route::delete('delete-contacts/{id}', 'deleteUserContacts');
         });
 });
+
+Route::get('nearby', [NearbyController::class, 'getNearby']);
+
  
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

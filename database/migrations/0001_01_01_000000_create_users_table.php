@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('device_type', 255)->nullable();
             $table->boolean('is_verify')->default(0);
             $table->boolean('is_active')->default(0);
+            $table->string('latitude',100)->nullable();
+            $table->string('longitude',100)->nullable();
             $table->boolean('is_super_admin')->default(0);
             $table->boolean('is_notification')->default(1);
             $table->rememberToken();

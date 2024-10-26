@@ -47,7 +47,9 @@ class User extends Authenticatable implements JWTSubject
         'is_verify',
         'is_active',
         'is_super_admin',
-        'is_notification'
+        'is_notification',
+        'longitude',
+        'latitude'
     ];
 
     /**
@@ -90,6 +92,31 @@ class User extends Authenticatable implements JWTSubject
     {
         $query = self::where('id', $user_id)->first();
         return $query;
+    }
+
+    public static function addContacts($params, $user_id): mixed
+    {
+        foreach ($params['contacts'] as $contact) {
+            $contacts[] = [
+                'user_id' => $user_id,
+                'name' => $contact['name'] ?? null,           
+                'relationship' => $contact['relationship'] ?? null, 
+                'mobile_no' => $contact['phone'] ?? null     
+            ];
+        }
+        \DB::table('user_contacts')->insert($contacts);
+
+        return $contacts; 
+    }
+
+    public static function updateContacts($id, $user_id, $params)
+    {
+        \DB::table('user_contacts')
+        ->where('id', $id)
+        ->where('user_id', $user_id)
+        ->update($params);
+
+        return true;
     }
 
 }
