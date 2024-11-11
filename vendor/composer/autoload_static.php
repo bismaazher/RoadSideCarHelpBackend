@@ -39,6 +39,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
         '826f3da4001aa504d228ba58f15bad49' => __DIR__ . '/../..' . '/app/Helpers/Constants.php',
         '688efec91d02be7c71c50c2746bcf315' => __DIR__ . '/../..' . '/app/Helpers/GeneralHelper.php',
+        '3aaaf8187ad15b16f3e46f99e01f31fd' => __DIR__ . '/../..' . '/app/Helpers/PushNotificationHelper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -553,8 +554,10 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
 
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Events\\NotificationEvent' => __DIR__ . '/../..' . '/app/Events/NotificationEvent.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Api\\AuthUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/AuthUserController.php',
+        'App\\Http\\Controllers\\Api\\NearbyController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/NearbyController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -572,6 +575,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'App\\Http\\Requests\\UserLoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserLoginRequest.php',
         'App\\Http\\Requests\\UserRegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserRegisterRequest.php',
         'App\\Http\\Responses\\BaseResponse' => __DIR__ . '/../..' . '/app/Http/Responses/BaseResponse.php',
+        'App\\Models\\Notification' => __DIR__ . '/../..' . '/app/Models/Notification.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserOtp' => __DIR__ . '/../..' . '/app/Models/UserOtp.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -579,6 +583,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\Services\\LocationService' => __DIR__ . '/../..' . '/app/Services/LocationService.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',
@@ -690,11 +695,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'Cron\\MinutesField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
-        'Database\\Seeders\\ActivitySeeder' => __DIR__ . '/../..' . '/database/seeders/ActivitySeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
-        'Database\\Seeders\\FieldSeeder' => __DIR__ . '/../..' . '/database/seeders/FieldSeeder.php',
-        'Database\\Seeders\\HabitSeeder' => __DIR__ . '/../..' . '/database/seeders/HabitSeeder.php',
-        'Database\\Seeders\\UserGroupSeeder' => __DIR__ . '/../..' . '/database/seeders/UserGroupSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',

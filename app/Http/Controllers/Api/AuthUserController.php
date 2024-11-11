@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Responses\BaseResponse;
+use App\Models\Notification;
 use App\Models\UserOtp;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -173,8 +174,74 @@ class AuthUserController extends Controller
 
     public function deleteUserContacts($id)
     {
-        \DB::table('user_contacts')->where('id', $id)->delete(true);
+        \DB::table('user_contacts')->where('id', $id)->delete();
         return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "Contact deleted successfully.");
     }
+
+    public function sendSOS()
+    {
+        // Get the current user's contacts along with their phone numbers
+        $contacts = \DB::table('user_contacts')
+            ->where('user_id', $this->currentUser->id)
+            ->pluck('mobile_no'); // Get only the phone numbers as an array
+
+        $users = User::whereIn('mobile_no', $contacts)->get();
+
+        $message = "{$this->currentUser->first_name} needs your help!";
+
+        // Send notification to each user or batch if applicable
+        $this->pushNotification($this->currentUser, $users, $message, "SOS Alert");
+
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "SOS notifications sent successfully.");
+    }
+
+    
+    static function pushNotification($currentUser, $otherUsers, $message, $title, $agoraData = null, $notificationType = '', $modelId = null)
+    {
+        // Ensure we're working with a collection for consistency
+        if (!($otherUsers instanceof \Illuminate\Support\Collection)) {
+            $otherUsers = collect([$otherUsers]); // Wrap single user in a collection
+        }
+
+        foreach ($otherUsers as $otherUser) {
+            if (empty($otherUser->longitude) || empty($otherUser->latitude)) {
+                \Log::warning("Missing location data for user ID: {$otherUser->id}");
+                continue; // Skip users without location data
+            }
+
+            $extras = [
+                'notification_type' => $notificationType,
+                'model_id' => (string) $modelId,
+                'message' => $message,
+                'sender_id' => $currentUser->id,
+                'notify_user_type' => "user",
+                'other_user_type' => "user",
+                'longitude' => $otherUser->longitude,
+                'latitude' => $otherUser->latitude,
+            ];
+
+            if (!empty($otherUser->fcm_token)) {
+                $tokens = [$otherUser->id => $otherUser->fcm_token];
+
+                sendPushNotification(
+                    $title,
+                    $message,
+                    $tokens,
+                    $extras,
+                    true
+                );
+            } else {
+                \Log::warning("FCM token missing for user ID: {$otherUser->id}");
+            }
+        }
+    }
+
+    public function getNotifications()
+    {
+        $notifications = Notification::where('notify_user_id', $this->currentUser->id )->get();
+        return new BaseResponse(STATUS_CODE_OK, STATUS_CODE_OK, "SOS notifications sent successfully.", $notifications);
+
+    }
+   
 
 }

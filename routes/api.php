@@ -38,6 +38,8 @@ Route::prefix('user')
             Route::get('contacts/{id}', 'getUserContactsById');
             Route::post('update-contacts/{id}', 'updateUserContacts');
             Route::delete('delete-contacts/{id}', 'deleteUserContacts');
+            Route::post('send-sos', 'sendSOS');
+            Route::get('notifications', 'getNotifications');
         });
 });
 

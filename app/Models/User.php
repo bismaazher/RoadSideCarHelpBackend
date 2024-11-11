@@ -96,14 +96,13 @@ class User extends Authenticatable implements JWTSubject
 
     public static function addContacts($params, $user_id): mixed
     {
-        foreach ($params['contacts'] as $contact) {
-            $contacts[] = [
-                'user_id' => $user_id,
-                'name' => $contact['name'] ?? null,           
-                'relationship' => $contact['relationship'] ?? null, 
-                'mobile_no' => $contact['phone'] ?? null     
-            ];
-        }
+        $contacts =[
+           'user_id' => $user_id,
+            'name' => $params['name'] ?? null,           
+            'relationship' => $params['relationship'] ?? null, 
+            'mobile_no' => $params['phone'] ?? null    
+        ];
+
         \DB::table('user_contacts')->insert($contacts);
 
         return $contacts; 
