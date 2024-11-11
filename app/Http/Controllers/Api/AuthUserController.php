@@ -204,10 +204,10 @@ class AuthUserController extends Controller
         }
 
         foreach ($otherUsers as $otherUser) {
-            if (empty($otherUser->longitude) || empty($otherUser->latitude)) {
-                \Log::warning("Missing location data for user ID: {$otherUser->id}");
-                continue; // Skip users without location data
-            }
+            // if (empty($otherUser->longitude) || empty($otherUser->latitude)) {
+            //     \Log::warning("Missing location data for user ID: {$otherUser->id}");
+            //     continue; // Skip users without location data
+            // }
 
             $extras = [
                 'notification_type' => $notificationType,
