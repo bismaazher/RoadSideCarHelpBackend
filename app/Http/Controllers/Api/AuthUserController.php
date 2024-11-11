@@ -216,8 +216,8 @@ class AuthUserController extends Controller
                 'sender_id' => $currentUser->id,
                 'notify_user_type' => "user",
                 'other_user_type' => "user",
-                'longitude' => $otherUser->longitude,
-                'latitude' => $otherUser->latitude,
+                'longitude' => $currentUser->longitude,
+                'latitude' => $currentUser->latitude,
             ];
 
             if (!empty($otherUser->fcm_token)) {
